@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { X, Edit3, Save } from "lucide-react";
+import { X} from "lucide-react";
 import axios from "axios";
 import { TaxDataForm } from './taxDataForm'
+import Image from "next/image";
 
 export interface TaxData {
     first_name?: string;
@@ -38,7 +39,7 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
     const [progress, setProgress] = useState<number>(0);
     const [loading, setLoading] = useState(false);
     const [taxData, setTaxData] = useState<any | null>(null);
-    const [editMode, setEditMode] = useState(false);
+    // const [editMode, setEditMode] = useState(false);
 
     // ✅ Upload Function
     const uploadOcrData = async (userId: string, file: File) => {
@@ -88,21 +89,21 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
         setProgress(0);
     };
     const convertResponse = (response: any) => {
-        const data = response?.data || {};
+  const data = response?.data || {};
 
-        const sumArray = (arr: any[] | null | undefined) =>
-            Array.isArray(arr)
-                ? arr.reduce((sum, item) => sum + (item.amount || 0), 0)
-                : 0;
+  const sumArray = (arr: any[] | null | undefined): number =>
+    Array.isArray(arr)
+      ? arr.reduce((sum, item) => sum + (item?.amount || 0), 0)
+      : 0;
 
+  return {
+    ...data,
+    pre_tax_deductions: sumArray(data.pre_tax_deductions),
+    post_tax_deductions: sumArray(data.post_tax_deductions),
+    deductions: sumArray(data.deductions),
+  };
+};
 
-        data.pre_tax_deductions = sumArray(data.pre_tax_deductions),
-            data.post_tax_deductions = sumArray(data.post_tax_deductions),
-            data.deductions = sumArray(data.deductions)
-
-
-        return data;
-    }
 
     // ✅ Proceed to upload and get OCR data
     const handleProceed = async () => {
@@ -207,7 +208,7 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
                             }}
                         >
                             <div className="flex flex-col items-center">
-                                <img
+                                <Image
                                     src="https://cdn-icons-png.flaticon.com/512/109/109612.png"
                                     alt="upload"
                                     className="w-6 h-6 mb-3 opacity-70"
@@ -262,14 +263,14 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
                                 ></iframe>
                             ) : file.type.startsWith("image/") ? (
                                 // Image Preview
-                                <img
+                                <Image
                                     src={URL.createObjectURL(file)}
                                     alt="Preview"
                                     className="max-w-full max-h-[400px] rounded-lg border"
                                 />
                             ) : (
                                 // Default Icon if not previewable
-                                <img
+                                <Image
                                     src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
                                     alt="pdf"
                                     className="w-24 h-24 opacity-80"

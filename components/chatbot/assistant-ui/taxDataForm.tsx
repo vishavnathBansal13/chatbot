@@ -125,7 +125,7 @@ const [submitted, setSubmitted] = useState(false);
   ];
 
   const handleChange = (field: string, value: any) => {
-    let updated = { ...form, [field]: value };
+    const updated = { ...form, [field]: value };
 
     // Auto calculate estimated annual income if hourly
     if (field === "hourly_rate" || field === "average_hours_per_week" || field === "seasonal_variation") {
@@ -237,11 +237,20 @@ const validate = () => {
 
 const handleSubmit = () => {
   setSubmitted(true); // mark that user tried to submit
+
+  // Safely update form flags before validation
+  setForm((prev:any) => ({
+    ...prev,
+    is_refund_data_fill: true,
+    is_paycheck_data_fill: true,
+  }));
+
+  // Validate with the updated form
   if (!validate()) return;
-  form.is_refund_data_fill=true,
-  form.is_paycheck_data_fill=true
+
   onSave(form);
 };
+
 
 
   const renderField = (key: string, value: any) => {
