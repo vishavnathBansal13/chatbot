@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {X} from "lucide-react";
+import { X } from "lucide-react";
 import axios from "axios";
 import { TaxDataForm } from './taxDataForm'
 import Image from "next/image";
@@ -89,20 +89,20 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
         setProgress(0);
     };
     const convertResponse = (response: any) => {
-  const data = response?.data || {};
+        const data = response?.data || {};
 
-  const sumArray = (arr: any[] | null | undefined): number =>
-    Array.isArray(arr)
-      ? arr.reduce((sum, item) => sum + (item?.amount || 0), 0)
-      : 0;
+        const sumArray = (arr: any[] | null | undefined): number =>
+            Array.isArray(arr)
+                ? arr.reduce((sum, item) => sum + (item?.amount || 0), 0)
+                : 0;
 
-  return {
-    ...data,
-    pre_tax_deductions: sumArray(data.pre_tax_deductions),
-    post_tax_deductions: sumArray(data.post_tax_deductions),
-    deductions: sumArray(data.deductions),
-  };
-};
+        return {
+            ...data,
+            pre_tax_deductions: sumArray(data.pre_tax_deductions),
+            post_tax_deductions: sumArray(data.post_tax_deductions),
+            deductions: sumArray(data.deductions),
+        };
+    };
 
 
     // ✅ Proceed to upload and get OCR data
@@ -111,7 +111,7 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
         setLoading(true);
         try {
             const result = await uploadOcrData(userId, file);
-            const reponse= convertResponse(result)
+            const reponse = convertResponse(result)
             // Assume OCR returns data shaped like TaxData
             // let result = {
             //     data: {
@@ -195,7 +195,7 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
     // 🔹 Otherwise show upload UI
     return (
         <div className="fixed inset-0 bg-[#49C2D420] flex justify-center items-center z-50">
-            <div className="bg-white w-full rounded-2xl shadow-xl p-6 relative" style={{maxWidth:"430px"}}>
+            <div className="bg-white w-full rounded-2xl shadow-xl p-6 relative" style={{ maxWidth: "430px" }}>
                 <h2 className="text-lg font-semibold mb-2">Upload file</h2>
 
                 {!file ? (
@@ -203,12 +203,15 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
                         <label
                             htmlFor="fileInput"
                             className="flex flex-col items-center justify-center border border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition"
-                            style={{paddingTop:"20px",
-                                paddingBottom:"20px"
+                            style={{
+                                paddingTop: "20px",
+                                paddingBottom: "20px"
                             }}
                         >
                             <div className="flex flex-col items-center">
                                 <Image
+                                    width={24} // 👈 required
+                                    height={24}
                                     src="https://cdn-icons-png.flaticon.com/512/109/109612.png"
                                     alt="upload"
                                     className="w-6 h-6 mb-3 opacity-70"
@@ -225,27 +228,28 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
                             id="fileInput"
                             accept=".pdf"
                             className="hidden"
-                            style={{display:"none"}}
+                            style={{ display: "none" }}
                             onChange={handleFileChange}
                         />
 
-                        <div className="flex justify-between w-full px-0 text-xs text-gray-400" style={{marginTop:10}}>
+                        <div className="flex justify-between w-full px-0 text-xs text-gray-400" style={{ marginTop: 10 }}>
                             <span>Supported format: PDF</span>
                             <span>Maximum size: 5MB</span>
                         </div>
                     </>
                 ) : (
-                    <div className="relative mt-3 border border-gray-200 rounded-lg p-4 bg-gray-50" style={{padding:"10px"}}>
+                    <div className="relative mt-3 border border-gray-200 rounded-lg p-4 bg-gray-50" style={{ padding: "10px" }}>
                         <button
                             onClick={handleRemoveFile}
                             className=" text-white hover:text-gray-600"
-                            style={{position:"absolute",
-                                right:"22px",
-                                top:"1px",
-                                background:"rgb(81, 141, 231)",
-                                borderRadius:"50px",
-                                padding:2,
-                                cursor:"pointer"
+                            style={{
+                                position: "absolute",
+                                right: "22px",
+                                top: "1px",
+                                background: "rgb(81, 141, 231)",
+                                borderRadius: "50px",
+                                padding: 2,
+                                cursor: "pointer"
                             }}
                         >
                             <X size={14} />
@@ -259,11 +263,13 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
                                     src={URL.createObjectURL(file)}
                                     className="w-full rounded-lg border"
                                     title="PDF Preview"
-                                    style={{height:"100%"}}
+                                    style={{ height: "100%" }}
                                 ></iframe>
                             ) : file.type.startsWith("image/") ? (
                                 // Image Preview
                                 <Image
+                                    width={24} // 👈 required
+                                    height={24}
                                     src={URL.createObjectURL(file)}
                                     alt="Preview"
                                     className="max-w-full max-h-[400px] rounded-lg border"
@@ -271,6 +277,8 @@ export const OCRUploadComponent: React.FC<{ userId: string, onComplete: (data: T
                             ) : (
                                 // Default Icon if not previewable
                                 <Image
+                                    width={24} // 👈 required
+                                    height={24}
                                     src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
                                     alt="pdf"
                                     className="w-24 h-24 opacity-80"

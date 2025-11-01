@@ -146,7 +146,6 @@ const [submitted, setSubmitted] = useState(false);
 const validate = () => {
   const newErrors: Record<string, string> = {};
 
-  // ✅ List of always-required fields
   const requiredFields = [
     "age",
     "filing_status",
@@ -156,8 +155,7 @@ const validate = () => {
     "work_address",
   ];
 
-  // ✅ Validate all required fields, including undefined/null
-  console.log(form,"=====")
+  // ✅ Check all required fields
   requiredFields.forEach((key) => {
     const value = form[key];
     if (
@@ -170,7 +168,7 @@ const validate = () => {
     }
   });
 
-  // ✅ Conditional validation based on income type and filing status
+  // ✅ Conditional validation: filing status
   if (form.filing_status === "married_joint") {
     if (
       form.spouse_income === undefined ||
@@ -181,6 +179,7 @@ const validate = () => {
     }
   }
 
+  // ✅ Conditional validation: salary
   if (form.income_type === "salary") {
     if (
       form.annual_salary === undefined ||
@@ -191,6 +190,7 @@ const validate = () => {
     }
   }
 
+  // ✅ Conditional validation: hourly
   if (form.income_type === "hourly") {
     if (
       form.hourly_rate === undefined ||
@@ -215,7 +215,7 @@ const validate = () => {
     }
   }
 
-  // ✅ Address format validation (ZIP code)
+  // ✅ Address format validation (ZIP)
   if (form.home_address && !/^\d{5}$/.test(form.home_address)) {
     newErrors.home_address = "Enter a valid 5-digit ZIP code";
   }
@@ -228,9 +228,56 @@ const validate = () => {
     newErrors.current_date = "Date cannot be in the future";
   }
 
+  // ✅ Age validation (13–99)
+  if (form.age !== undefined && form.age !== null && form.age !== "") {
+    const age = Number(form.age);
+    if (isNaN(age) || age < 13 || age > 99) {
+      newErrors.age = "Age must be between 13 and 99";
+    }
+  }
+
+  // ✅ Annual salary limit
+  if (form.annual_salary !== undefined && form.annual_salary !== null && form.annual_salary !== "") {
+    const salary = Number(form.annual_salary);
+    if (isNaN(salary) || salary > 500000) {
+      newErrors.annual_salary = "Annual salary cannot exceed 500,000";
+    } else if (salary < 0) {
+      newErrors.annual_salary = "Annual salary cannot be negative";
+    }
+  }
+
+  // ✅ Current withholding < annual salary
+  if (
+    form.current_withholding_per_paycheck !== undefined &&
+    form.current_withholding_per_paycheck !== null &&
+    form.current_withholding_per_paycheck !== "" &&
+    form.annual_salary !== undefined &&
+    form.annual_salary !== null &&
+    form.annual_salary !== ""
+  ) {
+    const withholding = Number(form.current_withholding_per_paycheck);
+    const salary = Number(form.annual_salary);
+    if (withholding < 0) {
+      newErrors.current_withholding_per_paycheck = "Current withholding cannot be negative";
+    } else if (withholding > salary) {
+      newErrors.current_withholding_per_paycheck =
+        "Current withholding cannot exceed annual salary";
+    }
+  }
+
+  // ✅ Generic check for negative numbers in all numeric fields
+  Object.entries(form).forEach(([key, value]) => {
+    if (typeof value === "number" || (!isNaN(value) && value !== "")) {
+      if (Number(value) < 0) {
+        newErrors[key] = `${key.replace(/_/g, " ")} cannot be negative`;
+      }
+    }
+  });
+
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
 };
+
 
 
 
@@ -239,15 +286,15 @@ const handleSubmit = () => {
   setSubmitted(true); // mark that user tried to submit
 
   // Safely update form flags before validation
-  setForm((prev:any) => ({
+ 
+
+  // Validate with the updated form
+  if (!validate()) return;
+ setForm((prev:any) => ({
     ...prev,
     is_refund_data_fill: true,
     is_paycheck_data_fill: true,
   }));
-
-  // Validate with the updated form
-  if (!validate()) return;
-
   onSave(form);
 };
 
