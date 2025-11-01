@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { X} from "lucide-react";
+import {X} from "lucide-react";
 import axios from "axios";
 import { TaxDataForm } from './taxDataForm'
 import Image from "next/image";
