@@ -266,7 +266,7 @@ const validate = () => {
   }
 
   // ✅ Generic check for negative numbers in all numeric fields
-  Object.entries(form).forEach(([key, value]) => {
+  Object.entries(form).forEach(([key, value]:any) => {
     if (typeof value === "number" || (!isNaN(value) && value !== "")) {
       if (Number(value) < 0) {
         newErrors[key] = `${key.replace(/_/g, " ")} cannot be negative`;
