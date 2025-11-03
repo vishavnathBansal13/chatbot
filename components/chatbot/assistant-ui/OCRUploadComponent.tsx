@@ -151,7 +151,28 @@ export const OCRUploadComponent: React.FC<{
       setLoading(false);
     }
   };
+  const [isDragging, setIsDragging] = useState(false);
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type === "application/pdf") {
+      setFile(file);
+    } else {
+      alert("Please upload a valid PDF file.");
+    }
+  };
   // const handleNestedEditChange = (
   //     section: string,
   //     key: string,
@@ -189,16 +210,27 @@ export const OCRUploadComponent: React.FC<{
           console.log("Updated Tax Data:", updated);
           onComplete(updated);
         }}
+        onCancel={() => {setFile(null) ;setTaxData(null)}} // <-- wrapped in arrow function
       />
     );
   }
-  const handleOpenPDF = () => {
-    window.open("/path/to/your-file.pdf", "_blank");
+  const handleOpenPDF = (file:any) => {
+     if (!file) return;
+
+  // Create a blob URL for the PDF file
+  const fileURL = URL.createObjectURL(file);
+
+  // Open the file in a new browser tab
+  window.open(fileURL, "_blank");
+
   };
   // 🔹 Otherwise show upload UI
   return (
     <div className="absolute inset-0 bg-[#49C2D420] flex justify-center items-center z-50">
       <div
+         onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
         className=" w-full rounded-2xl shadow p-4 relative"
         style={{ maxWidth: "290px", backgroundColor: "rgba(81, 141, 231,0.1)" }}
       >
@@ -347,7 +379,7 @@ export const OCRUploadComponent: React.FC<{
         {file && (
           <div className="flex justify-between items-center mt-6">
             <button
-              onClick={handleOpenPDF}
+              onClick={(e)=>handleOpenPDF(file)}
               style={{
                 backgroundColor: "transparent",
                 padding: "0",

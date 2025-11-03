@@ -34,7 +34,8 @@ export interface TaxData {
 export const TaxDataForm: React.FC<{
   taxData: TaxData;
   onSave: (payload: any) => void;
-}> = ({ taxData, onSave }) => {
+  onCancel?: () => void;
+}> = ({ taxData, onSave,onCancel }) => {
   const defaultFields: TaxData = {
     // first_name: "",
     // middle_name: "",
@@ -470,7 +471,7 @@ export const TaxDataForm: React.FC<{
         style={{ marginTop: "0px", marginBottom: "22px" }}
       >
         <button
-          onClick={handleSubmit}
+          onClick={onCancel}
           className="px-6 py-2 rounded-full font-medium text-white  transition-all w-full sm:w-auto"
           style={{
             border: "1px solid rgb(81, 141, 231)",
