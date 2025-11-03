@@ -151,21 +151,21 @@ export const OCRUploadComponent: React.FC<{
       setLoading(false);
     }
   };
-  const [isDragging, setIsDragging] = useState(false);
+//   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(true);
+    // setIsDragging(true);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(false);
+    // setIsDragging(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(false);
+    // setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.type === "application/pdf") {
       setFile(file);
@@ -379,7 +379,7 @@ export const OCRUploadComponent: React.FC<{
         {file && (
           <div className="flex justify-between items-center mt-6">
             <button
-              onClick={(e)=>handleOpenPDF(file)}
+              onClick={()=>handleOpenPDF(file)}
               style={{
                 backgroundColor: "transparent",
                 padding: "0",
